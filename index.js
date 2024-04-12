@@ -27,7 +27,7 @@ function getOptions(opts) {
     {},
     {
       size: 32,
-      failOnError: true
+      failOnError: true,
     },
     opts
   );
@@ -52,7 +52,7 @@ function getAppIconByPid(pid, opts) {
     execPath,
     [pid, '--size', opts.size, '--encoding', 'buffer'],
     {
-      encoding: 'buffer'
+      encoding: 'buffer',
     }
   );
 }
@@ -73,22 +73,23 @@ function getAppIconByPid(pid, opts) {
 function getAppIconListByPid(pidArray, opts) {
   opts = getOptions(opts);
   return Promise.all(
-    pidArray.map(pid => getAppIconByPid(pid, opts).catch(err => {
-      if (opts.failOnError === true) {
-        return Promise.reject(err);
-      }
-      return null;
+    pidArray.map((pid) =>
+      getAppIconByPid(pid, opts).catch((err) => {
+        if (opts.failOnError === true) {
+          return Promise.reject(err);
+        }
+        return null;
+      })
+    )
+  ).then((result) =>
+    result.map((icon, i) => ({
+      pid: pidArray[i],
+      icon,
     }))
-  ).then(
-    result =>
-      result.map((icon, i) => ({
-        pid: pidArray[i],
-        icon
-      }))
   );
 }
 
 module.exports = {
   getAppIconByPid,
-  getAppIconListByPid
+  getAppIconListByPid,
 };
