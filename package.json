@@ -1,6 +1,6 @@
 {
-  "name": "node-mac-app-icon",
-  "version": "1.4.0",
+  "name": "lwtlab-node-mac-app-icon",
+  "version": "0.0.1",
   "description": "Get App icons by pid on macOS in NodeJS",
   "main": "index.js",
   "types": "./index.d.ts",
@@ -11,15 +11,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sallar/node-mac-app-icon.git"
+    "url": "git+https://github.com/lwtlab/node-mac-app-icon.git"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/sallar/node-mac-app-icon/issues"
+    "url": "https://github.com/lwtlab/node-mac-app-icon/issues"
   },
-  "homepage": "https://github.com/sallar/node-mac-app-icon#readme",
+  "homepage": "https://github.com/lwtlab/node-mac-app-icon#readme",
   "dependencies": {
     "electron-util": "0.17.2",
     "execa": "^0.8.0"
