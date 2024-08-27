@@ -22,7 +22,7 @@
   "homepage": "https://github.com/lwtlab/node-mac-app-icon#readme",
   "dependencies": {
     "electron-util": "0.17.2",
-    "execa": "^0.8.0"
+    "execa": "^9.3.1"
   },
   "devDependencies": {
     "jsdoc-to-markdown": "^3.0.4"
