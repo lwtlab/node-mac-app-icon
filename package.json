@@ -1,5 +1,5 @@
 {
-  "name": "lwtlab-node-mac-app-icon",
+  "name": "@lwtlab/node-mac-app-icon",
   "version": "0.0.2",
   "description": "Get App icons by pid on macOS in NodeJS",
   "main": "index.js",
