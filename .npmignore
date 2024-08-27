@@ -6,3 +6,7 @@ test.js
 .travis.yml
 GetAppIcon
 build.sh
+node_modules
+.gitmodules
+demo
+tsconfig.json

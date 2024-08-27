@@ -6,8 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build:tsc": "tsc",
-    "build": "./build.sh",
-    "prepare": "npm run build"
+    "build": "yarn build:tsc && ./build.sh"
   },
   "repository": {
     "type": "git",
