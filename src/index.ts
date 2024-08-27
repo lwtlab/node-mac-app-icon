@@ -1,35 +1,26 @@
-const path = require('path');
-const execa = require('execa');
+import path from 'path';
 const electronUtil = require('electron-util/node');
+
+export interface Options {
+  size?: number;
+  failOnError?: boolean;
+}
+export interface PidIcon {
+  pid: number;
+  icon: Buffer;
+}
 
 // Workaround for https://github.com/electron/electron/issues/9459
 const execPath = path.join(electronUtil.fixPathForAsarUnpack(__dirname), 'run');
 
-/**
- * @typedef {Object} Options
- * @property {number} size Size of output icon (in points)
- */
-
-/**
- * @typedef {Object} ListOptions
- * @property {number} size Size of output icon (in points)
- * @property {boolean} failOnError Fail hard if a pid in the list was not found
- */
-
-/**
- * @typedef {Object} ListResult
- * @property {number} pid PID of the application
- * @property {Buffer} icon Buffer containing image data
- */
-
-function getOptions(opts) {
+function getOptions(opts?: Options) {
   return Object.assign(
     {},
     {
       size: 32,
       failOnError: true,
     },
-    opts
+    opts ?? {}
   );
 }
 
@@ -46,15 +37,21 @@ function getOptions(opts) {
  * @param {ListOptions} opts
  * @returns {Promise<Buffer>} Buffer containing image data
  */
-function getAppIconByPid(pid, opts) {
+export async function getAppIconByPid(
+  pid: number,
+  opts?: Options
+): Promise<Buffer> {
   opts = getOptions(opts);
-  return execa.stdout(
+  const { execFile } = require('child_process');
+  const { promisify } = require('util');
+  const execFileAsync = promisify(execFile);
+
+  const { stdout } = await execFileAsync(
     execPath,
-    [pid, '--size', opts.size, '--encoding', 'buffer'],
-    {
-      encoding: 'buffer',
-    }
+    [pid.toString(), '--size', opts.size!.toString(), '--encoding', 'buffer'],
+    { encoding: 'buffer' }
   );
+  return stdout;
 }
 
 /**
@@ -70,26 +67,24 @@ function getAppIconByPid(pid, opts) {
  * @param {Options} opts
  * @returns {Promise<ListResult[]>} Buffer containing image data
  */
-function getAppIconListByPid(pidArray, opts) {
+export async function getAppIconListByPid(
+  pidArray: number[],
+  opts?: Options
+): Promise<PidIcon[]> {
   opts = getOptions(opts);
-  return Promise.all(
-    pidArray.map((pid) =>
-      getAppIconByPid(pid, opts).catch((err) => {
+  const results = await Promise.all(
+    pidArray.map(async (pid) => {
+      try {
+        const icon = await getAppIconByPid(pid, opts);
+        return { pid, icon };
+      } catch (err) {
         if (opts.failOnError === true) {
-          return Promise.reject(err);
+          throw err;
         }
-        return null;
-      })
-    )
-  ).then((result) =>
-    result.map((icon, i) => ({
-      pid: pidArray[i],
-      icon,
-    }))
+        return { pid, icon: null };
+      }
+    })
   );
-}
 
-module.exports = {
-  getAppIconByPid,
-  getAppIconListByPid,
-};
+  return results.filter((result): result is PidIcon => result.icon !== null);
+}
